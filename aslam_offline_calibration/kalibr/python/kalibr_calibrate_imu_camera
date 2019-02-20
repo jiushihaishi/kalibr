@@ -83,7 +83,7 @@ def parseArgs():
     groupImu.add_argument('--imu', dest='imu_yamls', nargs='+', help='Yaml files holding the IMU noise parameters. The first IMU will be the reference IMU.', required=True, action=Once)
     groupImu.add_argument('--imu-delay-by-correlation', action='store_true', dest='estimate_imu_delay', \
                           help='Estimate the delay between multiple IMUs by correlation. By default, no temporal calibration between IMUs will be performed.', required=False)
-    groupImu.add_argument('--dir', dest'dir', help='Directory to save result', required=True, action=Once)      
+    groupImu.add_argument('--dir', dest='dir', help='Directory to save result', required=True, action=Once)      
     groupImu.add_argument('--imu-models', nargs='+', dest='imu_models', help='The IMU models to estimate. Currently supported are \'calibrated\', \'scale-misalignment\' and \'scale-misalignment-size-effect\'.', action=Once)
     
     groupTarget = parser.add_argument_group('Calibration target')
