@@ -7,7 +7,7 @@ import md5
 import sm
 import sys
 import yaml
-
+import os
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -49,6 +49,7 @@ def parse_args():
         default=False,
         required=False,
         action='store_true')
+    parser.add_argument('--dir', help='Directory to save configuration files', required=False)
     return parser.parse_args()
 
 
@@ -105,7 +106,7 @@ class ImuConfig:
         self.id = imu_dict['id']
         self.T_i_b = np.eye(4)
         self.time_offset = 0.0
-        self.update_rate = 200.0
+        self.update_rate = 800.0
 
         # Gyro noise density. [rad/s*1/sqrt(Hz)]
         self.gyro_noise_density = imu_dict['sigmas']['gyro_noise_density']
@@ -303,6 +304,7 @@ class CalibrationConfig:
         data = read_yaml(self.input_file_name)
         self.__extract_data(data)
         self.to_ncamera = parsed_args.to_ncamera
+        self.dir = parsed_args.dir
         if self.__is_kalibr_format:
             if not self.to_ncamera:
                 if parsed_args.imu_yaml is None:
@@ -366,12 +368,12 @@ class CalibrationConfig:
             camchain_dict[cam_name] = self.cameras[cam_name].get_kalibr_format(
                 T_cnm1_i)
             T_cnm1_i = self.cameras[cam_name].T_cn_i
-        write_yaml(self.__get_output_file_name(), camchain_dict)
+        write_yaml(os.path.join(self.dir, self.__get_output_file_name()), camchain_dict)
         print("Wrote " + str(self.__get_output_file_name()) + ".")
         if not self.imu_output_file_name is None:
             assert self.__has_imu
             imu_dict = self.imu.get_kalibr_format()
-            write_yaml(self.imu_output_file_name, imu_dict)
+            write_yaml(os.path.join(self.dir, self.imu_output_file_name), imu_dict)
             print("Wrote " + str(self.imu_output_file_name) + ".")
 
     def __write_maplab_data(self):
@@ -391,11 +393,11 @@ class CalibrationConfig:
         default_flow_style = False
         use_indent_dumper = True
         if not self.to_ncamera:
-            write_yaml(self.__get_output_file_name(), sensors_dict,
+            write_yaml(os.path.join(self.dir, self.__get_output_file_name()), sensors_dict,
                        default_flow_style, use_indent_dumper)
         else:
             ncameras_dict = sensors_dict['ncameras'][0]
-            write_yaml(self.__get_output_file_name(), ncameras_dict,
+            write_yaml(os.path.join(self.dir, self.__get_output_file_name()), ncameras_dict,
                        default_flow_style, use_indent_dumper)
         print("Wrote " + str(self.__get_output_file_name()) + ".")
 

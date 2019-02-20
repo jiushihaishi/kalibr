@@ -739,7 +739,7 @@ def plotOutlierCorners(cself, removedOutlierCorners, fno=1, clearFigure=True, ti
         pl.imshow(I, cmap='Greys')
         
 
-def generateReport(cself, filename="report.pdf", showOnScreen=False, graph=None, removedOutlierCorners=None):
+def generateReport(cself, filename="report.pdf", showOnScreen=True, graph=None, removedOutlierCorners=None):
     #plotter
     plotter = PlotCollection.PlotCollection("Calibration report")
 
@@ -794,8 +794,8 @@ def generateReport(cself, filename="report.pdf", showOnScreen=False, graph=None,
     pdf.close()
     print "Report written to: {0}".format(filename)
     
-    if showOnScreen:
-        #plotter.show()  
+    #if showOnScreen:
+    #plotter.show()  
     
 def plotCorners(gridobs, fno=1, cornerlist=None, clearFigure=True, plotImage=True, color=None, subplot=0):
     if color is None:

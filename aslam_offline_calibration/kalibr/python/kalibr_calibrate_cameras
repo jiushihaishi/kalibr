@@ -79,6 +79,7 @@ def parseArgs():
             
     parser = KalibrArgParser(description='Calibrate the intrinsics and extrinsics of a camera system with non-shared overlapping field of view.', usage=usage)
     parser.add_argument('--models', nargs='+', dest='models', help='The camera model {0} to estimate'.format(cameraModels.keys()), required=True)
+    parser.add_argument('--dir', dest='dir', help='Directory to save result files', required=True)
     
     groupSource = parser.add_argument_group('Data source')
     groupSource.add_argument('--bag', dest='bagfile', help='The bag file with the data')
@@ -404,17 +405,17 @@ def main():
             
             #write to file
             bagtag = parsed.bagfile.translate(None, "<>:/\|?*").replace('.bag', '', 1)
-            resultFile = "camchain-cam.yaml"
+            resultFile = os.path.join(parsed.dir, 'camchain-cam.yaml')
             kcc.saveChainParametersYaml(calibrator, resultFile, graph)
             print "Results written to file: {0}".format(resultFile)
             
             #save results to file
-            resultFileTxt = "results-cam.txt"
+            resultFileTxt = os.path.join(parsed.dir, 'results-cam.txt')
             kcc.saveResultTxt(calibrator, filename=resultFileTxt)
             print "  Detailed results written to file: {0}".format(resultFileTxt)
             
             #generate report
-            reportFile = "report-cam.pdf"
+            reportFile = os.path.join(parsed.dir,'report-cam.pdf')
             G=None; 
             if numCams>1: 
                 G=graph

@@ -189,8 +189,8 @@ def generateReport(cself, filename="report.pdf", showOnScreen=True):
         pdf.savefig(fig)
     pdf.close()
 
-    if showOnScreen:
-        plotter.show()
+    #if showOnScreen:
+    #plotter.show()
 
 def saveResultTxt(cself, filename='cam_imu_result.txt'):
     f = open(filename, 'w')

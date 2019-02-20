@@ -102,7 +102,7 @@ def printCameraBlock(camConfig, t_SC, q_CS):
 
     CAM_CALIBRATION+="\n"
 
-    with open('rovio_cam' + str(cidx) + '.yaml', 'w') as file_:
+    with open(parsed.dir + '/rovio_cam' + str(cidx) + '.yaml', 'w') as file_:
       file_.write(CAM_CALIBRATION)
       print("written '{}'".format(file_.name))
 
@@ -111,6 +111,7 @@ def printCameraBlock(camConfig, t_SC, q_CS):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Convert a camchain_imu.yaml to an aslam camera configuration block.')
     parser.add_argument('--cam', dest='chainYaml', help='Camera configuration as yaml file', required=True)
+    parser.add_argument('--dir', help='directory to save configuration files', required=True)
     parsed = parser.parse_args()
 
 
@@ -150,6 +151,6 @@ if __name__ == "__main__":
     with open(kalibr_path + '/python/exporters/auxiliary_files/rovio_footer.txt', 'r') as file_:
         CONFIG += file_.read()
 
-    with open('rovio_test.info', 'w') as file_:
+    with open(parsed.dir + '/rovio.info', 'w') as file_:
       file_.write(CONFIG)
       print("written '{}'".format(file_.name))

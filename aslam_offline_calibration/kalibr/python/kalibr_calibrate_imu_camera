@@ -7,7 +7,8 @@ from kalibr_imu_camera_calibration import *
 import numpy as np
 import argparse
 import signal
-import sys   
+import sys
+import os
 
 # make numpy print prettier
 np.set_printoptions(suppress=True)
@@ -81,7 +82,8 @@ def parseArgs():
     groupImu = parser.add_argument_group('IMU configuration')
     groupImu.add_argument('--imu', dest='imu_yamls', nargs='+', help='Yaml files holding the IMU noise parameters. The first IMU will be the reference IMU.', required=True, action=Once)
     groupImu.add_argument('--imu-delay-by-correlation', action='store_true', dest='estimate_imu_delay', \
-                          help='Estimate the delay between multiple IMUs by correlation. By default, no temporal calibration between IMUs will be performed.', required=False)      
+                          help='Estimate the delay between multiple IMUs by correlation. By default, no temporal calibration between IMUs will be performed.', required=False)
+    groupImu.add_argument('--dir', dest'dir', help='Directory to save result', required=True, action=Once)      
     groupImu.add_argument('--imu-models', nargs='+', dest='imu_models', help='The IMU models to estimate. Currently supported are \'calibrated\', \'scale-misalignment\' and \'scale-misalignment-size-effect\'.', action=Once)
     
     groupTarget = parser.add_argument_group('Calibration target')
@@ -213,21 +215,21 @@ def main():
 
     print
     bagtag = parsed.bagfile[0].translate(None, "<>:/\|?*").replace('.bag', '', 1)
-    yamlFilename = "camchain-imucam.yaml"
+    yamlFilename = os.path.join(parsed.dir, 'camchain-imucam.yaml')
     iCal.saveCamChainParametersYaml(yamlFilename)
     print "  Saving camera chain calibration to file: {0}".format(yamlFilename)
 
     print
-    yamlFilename = "imu.yaml"
+    yamlFilename = os.path.join(parsed.dir, 'imu.yaml')
     iCal.saveImuSetParametersYaml(yamlFilename)
     print "  Saving imu calibration to file: {0}".format(yamlFilename)
 
-    resultFileTxt = "results-imucam.txt"
+    resultFileTxt = os.path.join(parsed.dir, 'results-imucam.txt')
     util.saveResultTxt(iCal, filename=resultFileTxt)
     print "  Detailed results written to file: {0}".format(resultFileTxt)
     
     print "Generating result report..."    
-    reportFile = "report-imucam.pdf"
+    reportFile = os.path.join(parsed.dir, 'report-imucam.pdf')
     util.generateReport(iCal, filename=reportFile, showOnScreen=not parsed.dontShowReport)
     print "  Report written to {0}".format(reportFile)
     print
