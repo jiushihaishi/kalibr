@@ -44,11 +44,33 @@ def printErrorStatistics(cself, dest=sys.stdout):
         # Accelerometer errors
         e2 = np.array([ np.linalg.norm(e.error()) for e in imu.accelErrors ])
         print >> dest, "Accelerometer error (imu{0}) [m/s^2]: mean {1}, median {2}, std: {3}".format(iidx, np.mean(e2), np.median(e2), np.std(e2))
+    for iidx, imu in enumerate(cself.ImuList):
+        imu = cself.ImuList[iidx]
+        biasAccel = imu.accelBiasDv.spline()
+        times = np.array([im.stamp.toSec() for im in imu.imuData if im.stamp.toSec() > biasAccel.t_min() \
+                  and im.stamp.toSec() < biasAccel.t_max() ])
+        acc_bias_spline = np.array([biasAccel.evalD(t,0) for t in times]).T
+        times = times - times[0]     #remove time offset
+        print
+        print("Accel %s bias:" % iidx)
+        for i in xrange(3):
+            print(acc_bias_spline[i,0])
+        biasGyro = imu.gyroBiasDv.spline()
+        times = np.array([im.stamp.toSec() for im in imu.imuData if im.stamp.toSec() > biasGyro.t_min() \
+                  and im.stamp.toSec() < biasGyro.t_max() ])
+        gyro_bias_spline = np.array([biasGyro.evalD(t,0) for t in times]).T
+        times = times - times[0]     #remove time offset
+        print
+        print("Gyro %s bias:" % iidx)
+        for i in xrange(3):
+            print(gyro_bias_spline[i,0])
 
 def printGravity(cself):
     print
     print "Gravity vector: (in target coordinates): [m/s^2]"
     print cself.gravityDv.toEuclidean()
+
+        
 
 def printResults(cself, withCov=False):
     nCams = len(cself.CameraChain.camList)

@@ -16,6 +16,7 @@ import pylab as pl
 import math
 import gc
 import sys
+import yaml
 
 np.set_printoptions(suppress=True, precision=8)
 
@@ -669,6 +670,7 @@ def saveChainParametersYaml(cself, resultFile, graph):
                         acvb.DoubleSphere: 'none'}
 
     chain = cr.CameraChainParameters(resultFile, createYaml=True)
+    global camParams
     for cam_id, cam in enumerate(cself.cameras):
         cameraModel = cameraModels[cam.model]
         distortionModel = distortionModels[cam.model]
@@ -878,4 +880,42 @@ def saveResultTxt(cself, filename="camera_calibration_result.txt"):
     print >> f1, ""
 
     cself.cameras[0].ctarget.targetConfig.printDetails(f1)
+
+def saveHandeyeYaml(cself, filename="handeye.yaml"):
+    configIn = {
+        "distortion":
+        {
+            "parameters":
+            {
+                "rows": 4,
+                "cols": 1,
+                "data":[
+                     camParams.data["distortion_coeffs"][0],
+                     camParams.data["distortion_coeffs"][1],
+                     camParams.data["distortion_coeffs"][2],
+                     camParams.data["distortion_coeffs"][3]
+                ]
+            },
+            "type":"equidistant"
+        },
+        "type":"pinhole",
+        "label":"cam0",
+        "line-delay-nanoseconds": 0,
+        "image_width": 1280,
+        "image_height": 800,
+        "intrinsics":
+        {
+            "rows": 4,
+            "cols": 1,
+            "data":[
+                camParams.data["intrinsics"][0],
+                camParams.data["intrinsics"][1],
+                camParams.data["intrinsics"][2],
+                camParams.data["intrinsics"][3]
+            ]
+        }
+    }
+    configOut = yaml.dump(configIn)
+    handeyeConfig = open(filename, 'w')
+    handeyeConfig.write(configOut)
     

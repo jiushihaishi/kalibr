@@ -34,10 +34,13 @@ def getImageFilesFromDir(dir):
     '''Generates a list of files from the directory'''
     image_files = list()
     timestamps = list()
+    count = 2
     if os.path.exists(dir):
         for path, names, files in os.walk(dir):
             for f in files:
-                if os.path.splitext(f)[1] in ['.bmp', '.png', '.jpg', '.pgm']:
+                count = count + 1
+                if os.path.splitext(f)[1] in ['.bmp', '.png', '.jpg', '.pgm']\
+                    and count%3 == 0:
                     image_files.append( os.path.join( path, f ) )
                     timestamps.append(os.path.splitext(f)[0]) 
     #sort by timestamp

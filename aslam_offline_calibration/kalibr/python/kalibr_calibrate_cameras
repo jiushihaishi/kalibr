@@ -414,6 +414,11 @@ def main():
             kcc.saveResultTxt(calibrator, filename=resultFileTxt)
             print "  Detailed results written to file: {0}".format(resultFileTxt)
             
+            #write to handeye format file
+            handeyeFile = os.path.join(parsed.dir, 'handeye.yaml')
+            kcc.saveHandeyeYaml(calibrator, filename=handeyeFile)
+            print "Results written to handeye file: {0}".format(resultFile)
+
             #generate report
             reportFile = os.path.join(parsed.dir,'report-cam.pdf')
             G=None; 
