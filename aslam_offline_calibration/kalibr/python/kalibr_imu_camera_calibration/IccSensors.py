@@ -63,7 +63,7 @@ class IccCamera():
         self.targetObservations = kc.extractCornersFromDataset(self.dataset, self.detector, multithreading=multithreading)
         
         #an estimate of the gravity in the world coordinate frame  
-        self.gravity_w = np.array([9.80655, 0., 0.])
+        self.gravity_w = np.array([9.799438, 0., 0.])
         
     def setupCalibrationTarget(self, targetConfig, showExtraction=False, showReproj=False, imageStepping=False):
         
@@ -185,7 +185,7 @@ class IccCamera():
             if tk > poseSpline.t_min() and tk < poseSpline.t_max():
                 a_w.append(np.dot(poseSpline.orientation(tk), np.dot(R_i_c, - im.alpha)))
         mean_a_w = np.mean(np.asarray(a_w).T, axis=1)
-        self.gravity_w = mean_a_w / np.linalg.norm(mean_a_w) * 9.80655
+        self.gravity_w = mean_a_w / np.linalg.norm(mean_a_w) * 9.799438
         print "Gravity was intialized to", self.gravity_w, "[m/s^2]" 
 
         #set the gyro bias prior (if we have more than 1 cameras use recursive average)

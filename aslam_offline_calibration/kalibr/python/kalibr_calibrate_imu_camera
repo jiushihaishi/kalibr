@@ -222,6 +222,7 @@ def main():
     print
     yamlFilename = os.path.join(parsed.dir, 'imu.yaml')
     iCal.saveImuSetParametersYaml(yamlFilename)
+    iCal.saveBiasIntoYaml(yamlFilename)
     print "  Saving imu calibration to file: {0}".format(yamlFilename)
 
     resultFileTxt = os.path.join(parsed.dir, 'results-imucam.txt')
