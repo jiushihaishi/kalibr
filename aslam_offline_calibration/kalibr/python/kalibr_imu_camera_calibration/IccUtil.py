@@ -282,3 +282,26 @@ def printResultTxt(cself, stream=sys.stdout):
         print >> stream, "IMU{0}:\n".format(imuNr), "----------------------------"
         imu.getImuConfig().printDetails(stream)
         print >> stream, ""
+
+def saveBiasIntoYaml(cself, yamlFilename):
+    with open (yamlFilename,'r') as fileread:
+        curYaml = yaml.safe_load(fileread)
+    for iidx, imu in enumerate(cself.ImuList):
+        imu = cself.ImuList[iidx]
+        biasAccel = imu.accelBiasDv.spline()
+        times = np.array([im.stamp.toSec() for im in imu.imuData if im.stamp.toSec() > biasAccel.t_min() \
+            and im.stamp.toSec() < biasAccel.t_max() ])
+        acc_bias_spline = np.array([biasAccel.evalD(t,0) for t in times]).T
+        biasGyro = imu.gyroBiasDv.spline()
+        times = np.array([im.stamp.toSec() for im in imu.imuData if im.stamp.toSec() > biasGyro.t_min() \
+            and im.stamp.toSec() < biasGyro.t_max()])
+        gyro_bias_spline = np.array([biasGyro.evalD(t,0) for t in times]).T
+        Bias = {
+            'bias%s'%iidx : {
+                'accel':[float(acc_bias_spline[0,0]),float(acc_bias_spline[1,0]),float(acc_bias_spline[2,0])],
+                'gyro':[float(gyro_bias_spline[0,0]),float(gyro_bias_spline[1,0]),float(gyro_bias_spline[2,0])]
+            }
+        }
+        curYaml.update(Bias)
+    with open(yamlFilename,'w') as filewrite:
+        yaml.dump(curYaml, filewrite)
